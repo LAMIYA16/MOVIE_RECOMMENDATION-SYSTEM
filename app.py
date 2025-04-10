@@ -1,10 +1,14 @@
 import streamlit as st
 import mysql.connector
 import bcrypt
-import os
+
 from dotenv import load_dotenv
+import os
+import sys
 
+print(sys.path) 
 
+print(os.getenv("DB_HOST"))
 load_dotenv()
 def connect_db():
      try:
