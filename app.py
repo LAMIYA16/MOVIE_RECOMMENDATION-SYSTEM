@@ -1,14 +1,13 @@
 import streamlit as st
 import mysql.connector
 import bcrypt
-from movies import display_movies
 
 # Connect to MySQL Database
 def connect_db():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="Lamiya@2004",  # Change this
+        password="Lamiya@2004",  
         database="movie_db"
     )
 
@@ -23,78 +22,128 @@ def check_password(password, hashed):
 # Sign Up Function
 def signup():
     st.title("Sign Up")
+
     username = st.text_input("Username")
     email = st.text_input("Email")
     password = st.text_input("Password", type="password")
 
-    if st.button("Register"):
-        conn = connect_db()
-        cursor = conn.cursor()
-        hashed_password = hash_password(password)  
+    if st.button("Sign Up"):
+        if username and email and password:
+            try:
+                conn = connect_db()
+                cursor = conn.cursor()
 
-        try:
-            cursor.execute("INSERT INTO users (username, email, password) VALUES (%s, %s, %s)", 
-                           (username, email, hashed_password))
-            conn.commit()
-            st.success("User registered successfully!")
-        except mysql.connector.Error as err:
-            st.error(f"Error: {err}")
-        finally:
-            cursor.close()
-            conn.close()
+                hashed_password = hash_password(password)
+                cursor.execute("INSERT INTO users (username, email, password) VALUES (%s, %s, %s)", 
+                               (username, email, hashed_password))
+                
+                conn.commit()
+                cursor.close()
+                conn.close()
+                
+                st.success("Account created successfully! Please log in.")
+            except mysql.connector.Error as e:
+                st.error(f"Database error: {e}")
+        else:
+            st.warning("Please fill in all fields.")
 
+# Login Function
 # Login Function
 def login():
     st.title("Login")
+    
     username = st.text_input("Username")
     password = st.text_input("Password", type="password")
 
     if st.button("Login"):
-        conn = connect_db()
-        cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
-        user = cursor.fetchone()
+        try:
+            conn = connect_db()
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
+            user = cursor.fetchone()
+            cursor.close()
+            conn.close()
+
+            if user and check_password(password, user["password"]):
+                st.success("Login successful!")
+                st.session_state["logged_in"] = True
+                st.session_state["user_id"] = user["id"]
+                st.session_state["username"] = user["username"]
+                st.session_state["user_role"] = "admin" if user["is_admin"] else "user"  # Correctly set role
+                st.experimental_rerun()
+            else:
+                st.error("Invalid username or password.")
+        except mysql.connector.Error as e:
+            st.error(f"Database error: {e}")
+
+
+# Show Movies
+
+def show_movies():
+    st.title("🎬 Movie List with Ratings & Reviews")
+
+    conn = connect_db()
+    if not conn:
+        return
+
+    cursor = conn.cursor(dictionary=True)
+
+    try:
+        cursor.execute("SELECT * FROM movies")
+        movies = cursor.fetchall()
+
+        for movie in movies:
+            # Fetch average rating from the ratings table
+            cursor.execute("SELECT AVG(rating) as avg_rating FROM ratings WHERE movie_id = %s", (movie["id"],))
+            avg_rating = cursor.fetchone()["avg_rating"]
+            avg_rating = round(avg_rating, 1) if avg_rating else "No ratings yet"
+
+            # Fetch reviews from the reviews table
+            cursor.execute("""
+                SELECT u.username, r.review_text
+                FROM reviews r 
+                JOIN users u ON r.user_id = u.id 
+                WHERE r.movie_id = %s
+            """, (movie["id"],))
+            reviews = cursor.fetchall()
+
+            # Movie image (if available)
+            image_url = movie.get("image_url", "")
+
+            # Display movie details
+            with st.container():
+                st.markdown(f"""
+                    <div style="border-radius: 10px; padding: 15px; margin-bottom: 15px; background-color: #f9f9f9; display: flex; align-items: center;">
+                        {'<img src="' + image_url + '" width="150" height="220" style="margin-right: 15px; border-radius: 8px;">' if image_url else ""}
+                        <div>
+                            <h3 style="margin-bottom:5px;">{movie['title']}</h3>
+                            <p><b>Genre:</b> {movie['genre']}</p>
+                            <p><b>Average Rating:</b> ⭐ {avg_rating}</p>
+                        </div>
+                    </div>
+                """, unsafe_allow_html=True)
+
+                # Display user reviews
+                if reviews:
+                    st.subheader("User Reviews:")
+                    for review in reviews:
+                        st.markdown(f"""
+                            <div style="border-left: 5px solid #2E86C1; padding-left: 10px; margin-bottom: 10px;">
+                                <b>{review['username']}</b> :
+                                <p>{review['review_text']}</p>
+                            </div>
+                        """, unsafe_allow_html=True)
+                else:
+                    st.write("No reviews yet.")
+
+                st.write("---")
+
+    except mysql.connector.Error as err:
+        st.error(f"Error: {err}")
+    finally:
         cursor.close()
         conn.close()
 
-        if user and check_password(password, user["password"]):
-            st.session_state["logged_in"] = True
-            st.session_state["username"] = username
-            st.session_state["user_id"] = user["id"]  # Correctly store user ID
-            
-            st.success("Logged in successfully!")
-            st.rerun()
-            
-if "user_id" in st.session_state:
-                st.header("🎬 Movies ")
-                display_movies()
-else:
-            st.error("Invalid username or password.")
-# Show Movies
-def show_movies():
-    st.title("Movies")
-    search_query = st.text_input("Search Movies")
-    genre_filter = st.selectbox("Filter by Genre", ["All", "Action", "Comedy", "Drama", "Thriller"])
-
-    conn = connect_db()
-    cursor = conn.cursor(dictionary=True)
-
-    query = "SELECT * FROM movies WHERE title LIKE %s"
-    params = [f"%{search_query}%"]
-    
-    if genre_filter != "All":
-        query += " AND genre = %s"
-        params.append(genre_filter)
-
-    cursor.execute(query, tuple(params))
-    movies = cursor.fetchall()
-    cursor.close()
-    conn.close()
-
-    for movie in movies:
-        st.image(movie["image_url"], width=200)
-        st.write(f"**{movie['title']}** ({movie['genre']}) - ⭐ {movie['rating']}")
-        show_reviews(movie["id"])
 
 # Show Reviews
 def show_reviews(movie_id):
@@ -146,12 +195,69 @@ def write_review():
             cursor.close()
             conn.close()
 
+def rate_movie():
+    st.title("⭐ Rate a Movie")
+
+    conn = connect_db()
+    if not conn:
+        return
+
+    cursor = conn.cursor(dictionary=True)
+
+    try:
+        # Fetch movies
+        cursor.execute("SELECT id, title FROM movies")
+        movies = cursor.fetchall()
+
+        if not movies:
+            st.warning("No movies available to rate.")
+            return
+
+        # Movie selection
+        movie_options = {movie["title"]: movie["id"] for movie in movies}
+        movie_name = st.selectbox("Select a movie", list(movie_options.keys()))
+
+        # Select rating
+        rating = st.slider("Rate the movie (1-5 stars)", min_value=1, max_value=5, value=3)
+
+        if st.button("Submit Rating"):
+            movie_id = movie_options[movie_name]
+
+            # Check if the user has already rated this movie
+            cursor.execute("SELECT * FROM ratings WHERE user_id = %s AND movie_id = %s", (user_id, movie_id))
+            existing_rating = cursor.fetchone()
+
+            if existing_rating:
+                # Update rating if it exists
+                cursor.execute("UPDATE ratings SET rating = %s WHERE user_id = %s AND movie_id = %s",
+                               (rating, user_id, movie_id))
+                st.success(f"Updated your rating for {movie_name} to {rating} ⭐")
+            else:
+                # Insert new rating
+                cursor.execute("INSERT INTO ratings (user_id, movie_id, rating) VALUES (%s, %s, %s)",
+                               (user_id, movie_id, rating))
+                st.success(f"Thank you for rating {movie_name}! ⭐ {rating}")
+
+            conn.commit()
+
+    except mysql.connector.Error as err:
+        st.error(f"Database Error: {err}")
+
+    finally:
+        cursor.close()
+        conn.close()
+
 # Admin Panel
 def admin_panel():
     st.title("Admin Panel")
 
+    # Corrected admin check
     if "logged_in" not in st.session_state or not st.session_state["logged_in"]:
-        st.error("You need to log in as admin to access this panel.")
+        st.error("You need to log in to access this panel.")
+        return
+    
+    if st.session_state.get("user_role") != "admin":  # Corrected admin check
+        st.error("You need to log in as an admin to access this panel.")
         return
 
     new_movie_title = st.text_input("Movie Title")
@@ -181,18 +287,35 @@ def admin_panel():
 # Session Management
 if "logged_in" not in st.session_state:
     st.session_state["logged_in"] = False
-
-st.sidebar.title("Navigation")
-page = st.sidebar.radio("Go to", ["Login", "Movies", "Write Review", "Admin Panel"])
-
+    st.sidebar.title("Navigation")
 if not st.session_state["logged_in"]:
-    login()
-    if st.button("Sign Up Instead"):
-        signup()
+    page = st.sidebar.radio("Go to", ["Login", "Sign Up"])
 else:
-    if page == "Movies":
-        show_movies()
-    elif page == "Write Review":
-        write_review()
-    elif page == "Admin Panel":
-        admin_panel()
+    page = st.sidebar.radio("Go to", ["Movies", "Write Review","Rate Movie","Admin Panel", "Logout"])
+
+user_id = st.session_state.get("user_id")
+if page == "Login":
+    login()
+elif page == "Sign Up":
+    signup()
+elif page == "Movies":
+    show_movies()
+elif page == "Write Review":
+    write_review()
+
+elif page == "Rate  Movie":
+    
+        rate_movie()
+  
+elif page == "Admin Panel":
+    admin_panel()
+elif page == "Rate Movie":
+    rate_movie()
+
+elif page == "Logout":
+    st.session_state["logged_in"] = False
+    st.session_state["user_id"] = None
+    st.session_state["username"] = None
+    st.session_state["is_admin"] = False
+    st.success("You have logged out successfully!")
+    st.rerun()
