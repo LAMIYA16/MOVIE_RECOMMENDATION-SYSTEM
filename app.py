@@ -301,13 +301,11 @@ def rate_movie():
 # Admin Panel
 def admin_panel():
     st.title("Admin Panel")
-
-    # Corrected admin check
     if "logged_in" not in st.session_state or not st.session_state["logged_in"]:
         st.error("You need to log in to access this panel.")
         return
     
-    if st.session_state.get("user_role") != "admin":  # Corrected admin check
+    if st.session_state.get("user_role") != "admin":  
         st.error("You need to log in as an admin to access this panel.")
         return
 
@@ -334,8 +332,37 @@ def admin_panel():
         cursor.close()
         conn.close()
         st.success("Movie deleted successfully!")
+        
+    st.subheader("Manage Reviews")
+    conn = connect_db()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT id, user_id, movie_id, review_text FROM reviews")
+    reviews = cursor.fetchall()
+    cursor.close()
+    conn.close()
 
-# Session Management
+    if reviews:
+         for review in reviews:
+            st.write(f"**Review ID:** {review['id']} | **Movie ID:** {review['movie_id']} | **User ID:** {review['user_id']}")
+            st.write(f"📝 {review['review_text']}")
+            if st.button(f"Delete Review {review['id']}", key=f"delete_btn_{review['id']}"):
+                delete_review(review['id'])
+            
+def delete_review(review_id):
+    conn = connect_db()
+    if conn:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM reviews WHERE id = %s", (review_id,))
+        conn.commit()
+        cursor.close()
+        conn.close()
+        st.success(f"Review {review_id} deleted successfully!")
+        st.rerun()
+    else:
+        st.error("Database connection failed.")
+
+
+
 if "logged_in" not in st.session_state:
     st.session_state["logged_in"] = False
     st.sidebar.title("Navigation")
