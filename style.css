@@ -1,0 +1,49 @@
+/* General Page Styling */
+body {
+    background-color: black;
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+/* Main Container */
+.main {
+    background-color: black;
+    padding: 20px;
+}
+
+/* Title Styling */
+h1, h2, h3 {
+    color: red;
+    text-align: center;
+}
+
+/* Button Styling */
+.stButton > button {
+    background-color: red !important;
+    color: white !important;
+    border-radius: 10px !important;
+    font-size: 18px !important;
+    padding: 10px 20px !important;
+    border: 2px solid white !important;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Button Hover Effect */
+.stButton > button:hover {
+    background-color: darkred !important;
+    color: white !important;
+    transform: scale(1.05);
+}
+
+/* Sidebar Styling */
+.sidebar .sidebar-content {
+    background-color: black !important;
+    color: white !important;
+}
+
+/* Center Content */
+.centered {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

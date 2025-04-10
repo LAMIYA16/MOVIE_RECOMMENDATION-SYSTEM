@@ -5,6 +5,7 @@ import bcrypt
 from dotenv import load_dotenv
 import os
 import sys
+from home import home_page
 
 print(sys.path) 
 
@@ -362,38 +363,40 @@ def delete_review(review_id):
         st.error("Database connection failed.")
 
 
-
+if "page" not in st.session_state:
+    st.session_state["page"] = "Home"
 if "logged_in" not in st.session_state:
     st.session_state["logged_in"] = False
     st.sidebar.title("Navigation")
 if not st.session_state["logged_in"]:
-    page = st.sidebar.radio("Go to", ["Login", "Sign Up"])
+    page = st.sidebar.radio("Go to", ["Home","Login", "Sign Up"])
 else:
     page = st.sidebar.radio("Go to", ["Movies", "Write Review","Rate Movie","Admin Panel", "Logout"])
-
+st.session_state["page"] = page
 user_id = st.session_state.get("user_id")
-if page == "Login":
+if st.session_state["page"] == "Home":
+    st.title("🎬 MovieSearch")
+    st.write("Discover and review your favorite movies!")
+    if st.button("Get Started"):
+        st.session_state["page"] = "Login"
+        st.rerun()  
+elif st.session_state["page"] == "Login":
     login()
-elif page == "Sign Up":
+elif st.session_state["page"] == "Sign Up":
     signup()
-elif page == "Movies":
+elif st.session_state["page"] == "Movies":
     show_movies()
-elif page == "Write Review":
+elif st.session_state["page"] == "Write Review":
     write_review()
-
-elif page == "Rate  Movie":
-    
-        rate_movie()
-  
-elif page == "Admin Panel":
-    admin_panel()
-elif page == "Rate Movie":
+elif st.session_state["page"] == "Rate Movie":
     rate_movie()
-
-elif page == "Logout":
+elif st.session_state["page"] == "Admin Panel":
+    admin_panel()
+elif st.session_state["page"] == "Logout":
+    
     st.session_state["logged_in"] = False
     st.session_state["user_id"] = None
     st.session_state["username"] = None
     st.session_state["is_admin"] = False
     st.success("You have logged out successfully!")
-    st.rerun()
+    st.rerun() 
