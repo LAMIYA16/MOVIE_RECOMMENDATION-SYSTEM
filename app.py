@@ -18,10 +18,42 @@ def connect_db():
             password=os.getenv("DB_PASSWORD"),
             database=os.getenv("DB_NAME")
         )
+       
         return conn
      except mysql.connector.Error as err:
         print(f"Error: {err}")
         return None
+
+def get_genres():
+    conn=connect_db()
+    if conn:
+         cursor = conn.cursor(dictionary=True)
+         cursor.execute("SELECT DISTINCT genre FROM movies")
+         genres = [row["genre"] for row in cursor.fetchall()]
+         conn.close()
+         return genres
+    return []
+
+def get_movies(search_query=None, selected_genre=None):
+    conn = connect_db() 
+    if conn:
+        cursor = conn.cursor(dictionary=True)
+        query = "SELECT * FROM movies"
+        params = []
+
+        if search_query:
+            query += " WHERE title LIKE %s"
+            params.append(f"%{search_query}%")
+
+        if selected_genre and selected_genre != "All":
+            query += " AND genre = %s" if search_query else " WHERE genre = %s"
+            params.append(selected_genre)
+
+        cursor.execute(query, params)
+        movies = cursor.fetchall()
+        conn.close()
+        return movies
+    return []
 
 # Hash Password
 def hash_password(password):
@@ -81,7 +113,7 @@ def login():
                 st.session_state["logged_in"] = True
                 st.session_state["user_id"] = user["id"]
                 st.session_state["username"] = user["username"]
-                st.session_state["user_role"] = "admin" if user["is_admin"] else "user"  # Correctly set role
+                st.session_state["user_role"] = "admin" if user["is_admin"] else "user"  
                 st.experimental_rerun()
             else:
                 st.error("Invalid username or password.")
@@ -103,7 +135,14 @@ def show_movies():
     try:
         cursor.execute("SELECT * FROM movies")
         movies = cursor.fetchall()
-
+        search_query = st.text_input("Search for a movie", "")
+        genres = ["All"] + get_genres()
+        selected_genre = st.selectbox("Filter by Genre", genres)
+    
+        movies = get_movies(search_query, selected_genre)
+    
+        if not movies:
+          st.write("No movies found.")
         for movie in movies:
             # Fetch average rating from the ratings table
             cursor.execute("SELECT AVG(rating) as avg_rating FROM ratings WHERE movie_id = %s", (movie["id"],))
@@ -119,7 +158,7 @@ def show_movies():
             """, (movie["id"],))
             reviews = cursor.fetchall()
 
-            # Movie image (if available)
+     
             image_url = movie.get("image_url", "")
 
             # Display movie details
