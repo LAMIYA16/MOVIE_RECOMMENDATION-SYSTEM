@@ -11,14 +11,14 @@ MovieSearch is a user-friendly movie recommendation system where users can:
 -Admins can add, update, or delete movies from the database.
 -It is built with Streamlit for the front end and MySQL for the backend, ensuring a smooth experience for all users.
 
-🛠️ Tech Stack
+## 🛠️ Tech Stack
 Frontend: Streamlit, HTML, CSS
 
 Backend: MySQL, Python
 
 Authentication: MySQL
 
-📂 Project Structure 
+## 📂 Project Structure 
 MovieSearch/ 
 │── app.py # Main Streamlit application 
 │── requirements.txt # Dependencies list 
@@ -27,7 +27,7 @@ MovieSearch/
 │── style.css #styling features 
 │── .env
 
-🛠️ Installation & Setup 
+## 🛠️ Installation & Setup 
 1️⃣ Clone the Repository 
 git clone https://github.com/LAMIYA16/MOVIE_RECOMMENDATION-SYSTEM.git
 cd MovieSearch
@@ -44,7 +44,8 @@ pip install -r requirements.txt
 4️⃣ Run the Application 
 streamlit run app.py
 
-🌟 Features
+
+## Features
 
 User Authentication – Sign up, log in, and manage accounts.
 Movie Search – Search by title and genre.
