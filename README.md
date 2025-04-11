@@ -19,13 +19,13 @@ MovieSearch is a user-friendly movie recommendation system where users can:
 - Authentication: MySQL
 
 ## 📂 Project Structure 
-MovieSearch/ 
-│── app.py # Main Streamlit application 
-│── requirements.txt # Dependencies list 
-│── README.md # Project documentation 
-│── .gitignore # Files to exclude from GitHub 
-│── style.css #styling features 
-│── .env
+MovieSearch/ \n
+│── app.py # Main Streamlit application\n 
+│── requirements.txt # Dependencies list\n
+│── README.md # Project documentation\n 
+│── .gitignore # Files to exclude from GitHub\n 
+│── style.css #styling features\n
+│── .env\n
 
 ## 🛠️ Installation & Setup 
 1️⃣ Clone the Repository 
