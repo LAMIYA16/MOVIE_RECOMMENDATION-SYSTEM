@@ -1,8 +1,8 @@
 
-📽️ MovieSearch 
+# 📽️ MovieSearch 
 🚀 Your ultimate gateway to the world of cinema!
 
-📌 About the Project 
+## 📌 About the Project 
 MovieSearch is a user-friendly movie recommendation system where users can:
 
 -Search for movies by title and genre.
