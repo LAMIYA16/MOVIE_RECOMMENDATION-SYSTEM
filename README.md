@@ -12,11 +12,11 @@ MovieSearch is a user-friendly movie recommendation system where users can:
 - It is built with Streamlit for the front end and MySQL for the backend, ensuring a smooth experience for all users.
 
 ## 🛠️ Tech Stack
-Frontend: Streamlit, HTML, CSS
+- Frontend: Streamlit, HTML, CSS
 
-Backend: MySQL, Python
+- Backend: MySQL, Python
 
-Authentication: MySQL
+- Authentication: MySQL
 
 ## 📂 Project Structure 
 MovieSearch/ 
