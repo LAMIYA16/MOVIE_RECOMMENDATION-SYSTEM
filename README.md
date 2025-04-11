@@ -1,3 +1,4 @@
+
 📽️ MovieSearch 
 🚀 Your ultimate gateway to the world of cinema!
 
@@ -28,7 +29,7 @@ MovieSearch/
 
 🛠️ Installation & Setup 
 1️⃣ Clone the Repository 
-git clone https://github.com/your-username/MovieSearch.git 
+git clone https://github.com/LAMIYA16/MOVIE_RECOMMENDATION-SYSTEM.git
 cd MovieSearch
 
 2️⃣ Install Dependencies 
@@ -50,3 +51,4 @@ Movie Search – Search by title and genre.
 Ratings & Reviews – Leave reviews and see average ratings.
 Admin Dashboard – Add, edit, or delete movies.
 Dark Mode & Responsive UI – Optimized for all devices.
+
