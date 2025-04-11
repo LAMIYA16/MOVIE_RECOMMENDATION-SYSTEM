@@ -35,15 +35,21 @@ h1, h2, h3 {
     transform: scale(1.05);
 }
 
-/* Sidebar Styling */
-.sidebar .sidebar-content {
-    background-color: black !important;
-    color: white !important;
-}
 
 /* Center Content */
 .centered {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+html, body, [data-testid="stAppViewContainer"], .main {
+    background-color: black !important;
+    color: white !important;
+}
+
+/* Fix for sidebar */
+[data-testid="stSidebar"], [data-testid="stSidebarNav"] {
+    background-color: white !important;
+    color: black!important;
 }

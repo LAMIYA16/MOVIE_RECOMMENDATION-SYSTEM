@@ -34,6 +34,9 @@ def get_genres():
          conn.close()
          return genres
     return []
+def change_page(page_name):
+    st.session_state["page"] = page_name
+    st.rerun()  
 
 def get_movies(search_query=None, selected_genre=None):
     conn = connect_db() 
@@ -87,12 +90,14 @@ def signup():
                 conn.close()
                 
                 st.success("Account created successfully! Please log in.")
+                st.session_state["authenticated"] = True
+                change_page("Login")  
+
             except mysql.connector.Error as e:
                 st.error(f"Database error: {e}")
         else:
             st.warning("Please fill in all fields.")
 
-# Login Function
 # Login Function
 def login():
     st.title("Login")
@@ -112,18 +117,46 @@ def login():
             if user and check_password(password, user["password"]):
                 st.success("Login successful!")
                 st.session_state["logged_in"] = True
+                st.session_state["authenticated"] = True
                 st.session_state["user_id"] = user["id"]
                 st.session_state["username"] = user["username"]
                 st.session_state["user_role"] = "admin" if user["is_admin"] else "user"  
-                st.experimental_rerun()
+                st.session_state["page"] = "Dashboard"
+                st.rerun()
             else:
                 st.error("Invalid username or password.")
         except mysql.connector.Error as e:
             st.error(f"Database error: {e}")
+def show_dashboard():
+    st.title("🍿 Movie Dashboard")
+    st.write("Choose an action:")
 
+    col1, col2, col3, col4 = st.columns(4)
 
+    with col1:
+        if st.button("🎬 View Movies", key="view_movies"):
+            st.session_state["page"] = "Movies"
+            st.rerun()
+            
+    with col2:
+        if st.button("✍️ Write Review", key="write_review"):
+            st.session_state["page"] = "Write Review"
+            st.rerun()
+            
+
+    with col3:
+        if st.button("⭐ Rate Movie", key="rate_movie"):
+            st.session_state["page"] = "Rate Movie"
+            st.rerun()
+            
+
+    if st.session_state["user_role"] == "admin":
+        with col4:
+            if st.button("⚙️ Admin Panel", key="admin_panel"):
+                st.session_state["page"] = "Admin Panel"
+                st.rerun()
+                
 # Show Movies
-
 def show_movies():
     st.title("🎬 Movie List with Ratings & Reviews")
 
@@ -363,35 +396,57 @@ def delete_review(review_id):
         st.error("Database connection failed.")
 
 
+
+user_id = st.session_state.get("user_id")
 if "page" not in st.session_state:
     st.session_state["page"] = "Home"
-if "logged_in" not in st.session_state:
-    st.session_state["logged_in"] = False
-    st.sidebar.title("Navigation")
-if not st.session_state["logged_in"]:
-    page = st.sidebar.radio("Go to", ["Home","Login", "Sign Up"])
-else:
-    page = st.sidebar.radio("Go to", ["Movies", "Write Review","Rate Movie","Admin Panel", "Logout"])
-st.session_state["page"] = page
-user_id = st.session_state.get("user_id")
+if "authenticated" not in st.session_state:
+    st.session_state["authenticated"] = False
 if st.session_state["page"] == "Home":
-    st.title("🎬 MovieSearch")
-    st.write("Discover and review your favorite movies!")
-    if st.button("Get Started"):
-        st.session_state["page"] = "Login"
-        st.rerun()  
+    st.title("📽️MovieSearch📽️")
+    st.write("Welcome to Movie Search – your ultimate gateway to the world of cinema!")
+    st.write("Dive into a vast collection of movies, explore trending blockbusters, and uncover hidden gems. " )
+    st.write("Rate, review, and build your watchlist, all in one place. Whether you're a casual viewer or a hardcore cinephile, your next favorite film is just a search away! 🍿")
+    if st.button("Get Started",key="get_started"):
+        change_page("Auth")
+elif st.session_state["page"] == "Auth":
+    st.title("🔐 Login or Sign Up")
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("Login",key="auth_login"):
+            change_page("Login")  
+    with col2:
+        if st.button("Sign Up",key="auth_signup"):
+            change_page("Sign Up")
 elif st.session_state["page"] == "Login":
     login()
+    if st.button("Go Back",key="login_back"):
+        change_page("Auth")
 elif st.session_state["page"] == "Sign Up":
+    st.title("🆕 Create an Account")
     signup()
+    if st.button("Go Back",key="signup_back"):
+        change_page("Auth")
+elif st.session_state["page"] == "Dashboard":
+    show_dashboard()
+    if st.button("Go Back",key="dash_back"):
+            change_page("Home")
 elif st.session_state["page"] == "Movies":
     show_movies()
+    if st.button("Go Back",key="showmovies_back"):
+            change_page("Dashboard")
 elif st.session_state["page"] == "Write Review":
     write_review()
+    if st.button("Go Back",key="writereview_back"):
+            change_page("Dashboard")
 elif st.session_state["page"] == "Rate Movie":
     rate_movie()
+    if st.button("Go Back",key="ratemovies_back"):
+            change_page("Dashboard")
 elif st.session_state["page"] == "Admin Panel":
     admin_panel()
+    if st.button("Go Back",key="showmovies_back"):
+            change_page("Dashboard")
 elif st.session_state["page"] == "Logout":
     
     st.session_state["logged_in"] = False
