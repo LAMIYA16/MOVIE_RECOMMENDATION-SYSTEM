@@ -5,11 +5,11 @@
 ## 📌 About the Project 
 MovieSearch is a user-friendly movie recommendation system where users can:
 
--Search for movies by title and genre.
--View movie details, including descriptions, genres, and ratings.
--Rate and review movies as a registered user.
--Admins can add, update, or delete movies from the database.
--It is built with Streamlit for the front end and MySQL for the backend, ensuring a smooth experience for all users.
+- Search for movies by title and genre.
+- View movie details, including descriptions, genres, and ratings.
+- Rate and review movies as a registered user.
+- Admins can add, update, or delete movies from the database.
+- It is built with Streamlit for the front end and MySQL for the backend, ensuring a smooth experience for all users.
 
 ## 🛠️ Tech Stack
 Frontend: Streamlit, HTML, CSS
