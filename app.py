@@ -5,7 +5,7 @@ import bcrypt
 from dotenv import load_dotenv
 import os
 import sys
-from home import home_page
+
 with open("style.css") as f:
     css = f.read()
 
