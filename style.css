@@ -13,7 +13,7 @@ body {
 
 /* Title Styling */
 h1, h2, h3 {
-    color: red;
+    color: rgb(89, 12, 12);
     text-align: center;
 }
 
@@ -52,4 +52,42 @@ html, body, [data-testid="stAppViewContainer"], .main {
 [data-testid="stSidebar"], [data-testid="stSidebarNav"] {
     background-color: white !important;
     color: black!important;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel&display=swap');
+
+.movie-title {
+    font-size: 40px;
+    font-weight: bold;
+    text-align: center;
+    color: rgb(125, 3, 3) !important;  
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); 
+    font-family: 'Cinzel', serif;
+}
+
+.movie-info {
+    background: rgba(0, 0, 0, 0.5); 
+    color: white !important;
+    padding: 10px;
+    border-radius: 8px;
+}
+.movie-desc {
+    font-size: 18px;
+    text-align: center;
+    color: black !important;;
+    font-family: 'Arial', sans-serif;
+}
+
+.movie-rating {
+    font-size: 20px;
+    color: gold !important; 
+    text-align: center;
+}
+p {
+    color: white !important;  
+    font-size: 16px;
+}
+
+b {
+    color: rgb(141, 111, 111)!important;  
 }

@@ -6,6 +6,11 @@ from dotenv import load_dotenv
 import os
 import sys
 from home import home_page
+with open("style.css") as f:
+    css = f.read()
+
+st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
+
 
 print(sys.path) 
 
@@ -194,17 +199,22 @@ def show_movies():
 
      
             image_url = movie.get("image_url", "")
+           
+
 
             # Display movie details
             with st.container():
                 st.markdown(f"""
-                    <div style="border-radius: 10px; padding: 15px; margin-bottom: 15px; background-color: #f9f9f9; display: flex; align-items: center;">
-                        {'<img src="' + image_url + '" width="150" height="220" style="margin-right: 15px; border-radius: 8px;">' if image_url else ""}
+                    <div style="border-radius: 10px; padding: 15px; margin-bottom: 15px; background-color: white; display: flex; align-items: center;">
+                        {'<img src="' + image_url + '" width="200" height="220" style="margin-right: 15px; border-radius: 8px;">' if image_url else ""}
                         <div>
-                            <h3 style="margin-bottom:5px;">{movie['title']}</h3>
-                            <p><b>Genre:</b> {movie['genre']}</p>
-                            <p><b>Average Rating:</b> ⭐ {avg_rating}</p>
-                        </div>
+                            st.markdown(f'<h1 class="movie-title">{movie["title"]}</h1>', unsafe_allow_html=True)
+                            st.markdown(f'<h2 class="movie-title">{movie["genre"]}</h2>', unsafe_allow_html=True)
+                            st.markdown(f'<h2 style="color: black; text-shadow: 2px 2px 4px black;">⭐ {avg_rating}</h2>', unsafe_allow_html=True)
+
+                            
+
+                        
                     </div>
                 """, unsafe_allow_html=True)
 
@@ -214,8 +224,8 @@ def show_movies():
                     for review in reviews:
                         st.markdown(f"""
                             <div style="border-left: 5px solid #2E86C1; padding-left: 10px; margin-bottom: 10px;">
-                                <b>{review['username']}</b> :
-                                <p>{review['review_text']}</p>
+                                <p>{review['username']}</p> :
+                                <b>{review['review_text']}</b>
                             </div>
                         """, unsafe_allow_html=True)
                 else:
