@@ -43,38 +43,38 @@ MovieSearch/
 1️⃣ Clone the Repository 
 
 
-git clone https://github.com/LAMIYA16/MOVIE_RECOMMENDATION-SYSTEM.git
+- git clone https://github.com/LAMIYA16/MOVIE_RECOMMENDATION-SYSTEM.git
 
 
-cd MovieSearch
+- cd MovieSearch
 
 
 
 2️⃣ Install Dependencies 
 
 
-pip install -r requirements.txt
+- pip install -r requirements.txt
 
 3️⃣ Set Up the Database
 
 
- DB_HOST = "your-database-host" 
+- DB_HOST = "your-database-host" 
 
  
- DB_USER = "your-username" 
+ - DB_USER = "your-username" 
 
  
- DB_PASSWORD = "your-password" 
+ - DB_PASSWORD = "your-password" 
 
  
- DB_NAME = "your-database-name"
+-  DB_NAME = "your-database-name"
 
  
 
 4️⃣ Run the Application 
 
 
-streamlit run app.py
+- streamlit run app.py
 
 
 ## Features
