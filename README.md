@@ -41,27 +41,47 @@ MovieSearch/
 
 ## 🛠️ Installation & Setup 
 1️⃣ Clone the Repository 
+
+
 git clone https://github.com/LAMIYA16/MOVIE_RECOMMENDATION-SYSTEM.git
+
+
 cd MovieSearch
 
+
+
 2️⃣ Install Dependencies 
+
+
 pip install -r requirements.txt
 
 3️⃣ Set Up the Database
+
+
  DB_HOST = "your-database-host" 
+
+ 
  DB_USER = "your-username" 
+
+ 
  DB_PASSWORD = "your-password" 
+
+ 
  DB_NAME = "your-database-name"
 
+ 
+
 4️⃣ Run the Application 
+
+
 streamlit run app.py
 
 
 ## Features
 
-User Authentication – Sign up, log in, and manage accounts.
-Movie Search – Search by title and genre.
-Ratings & Reviews – Leave reviews and see average ratings.
-Admin Dashboard – Add, edit, or delete movies.
-Dark Mode & Responsive UI – Optimized for all devices.
+- User Authentication – Sign up, log in, and manage accounts.
+- Movie Search – Search by title and genre.
+- Ratings & Reviews – Leave reviews and see average ratings.
+- Admin Dashboard – Add, edit, or delete movies.
+- Dark Mode & Responsive UI – Optimized for all devices.
 
