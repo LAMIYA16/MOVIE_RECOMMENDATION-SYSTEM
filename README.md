@@ -22,19 +22,19 @@ MovieSearch is a user-friendly movie recommendation system where users can:
 MovieSearch/
 
 
-│── app.py # Main Streamlit application
+│── app.py           # Main Streamlit application
 
 
 │── requirements.txt # Dependencies list
 
 
-│── README.md # Project documentation 
+│── README.md        # Project documentation 
 
 
-│── .gitignore # Files to exclude from GitHub
+│── .gitignore       # Files to exclude from GitHub
 
 
-│── style.css #styling features
+│── style.css        #styling features
 
 
 │── .env
